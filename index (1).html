@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aptis General – Reading B2–C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF0EA;--card:#FFFFFF;--ink:#1B2A2E;--ink-soft:#48585C;--line:#D8DBD2;
+    --teal:#276461;--teal-deep:#184A48;--marker:#EBB042;--marker-soft:#F9EBC9;
+    --correct:#2F8B57;--correct-bg:#E7F4EC;--wrong:#C24A3C;--wrong-bg:#FBEBE8;
+    --shadow:0 1px 2px rgba(27,42,46,.06),0 8px 24px rgba(27,42,46,.07);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;font-size:16px}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 20px 130px}
+  header{margin-bottom:20px}
+  .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600;margin:0 0 6px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(29px,6vw,42px);line-height:1.05;margin:0;letter-spacing:-.01em}
+  h1 .mark{background:linear-gradient(transparent 60%,var(--marker) 60% 92%,transparent 92%);padding:0 .05em}
+  .sub{color:var(--ink-soft);margin:10px 0 0;max-width:64ch;font-size:15px}
+
+  .tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:22px 0 6px}
+  .tab{border:1px solid var(--line);background:var(--card);color:var(--ink-soft);font-weight:600;font-size:14px;padding:12px 12px;border-radius:12px;cursor:pointer;transition:.15s;text-align:left;line-height:1.3}
+  .tab .t-k{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:3px}
+  .tab:hover{border-color:var(--teal)}
+  .tab[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:#fff;box-shadow:var(--shadow)}
+  .tab[aria-selected="true"] .t-k{color:var(--marker)}
+
+  .part{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 22px 24px;margin-top:18px;box-shadow:var(--shadow)}
+  .part-head{display:flex;align-items:baseline;gap:12px;margin-bottom:4px;flex-wrap:wrap}
+  .part-no{font-family:'Fraunces',serif;font-weight:600;font-size:14px;color:#fff;background:var(--teal);width:30px;height:30px;min-width:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .part-title{font-family:'Fraunces',serif;font-size:21px;font-weight:600;margin:0}
+  .part-cefr{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);border:1px solid var(--line);padding:3px 8px;border-radius:20px;font-weight:600}
+  .instr{color:var(--ink-soft);font-size:14px;margin:8px 0 18px}
+
+  .passage{font-family:Georgia,'Times New Roman',serif;font-size:16.5px;line-height:1.75;background:var(--paper);border-left:3px solid var(--marker);border-radius:0 10px 10px 0;padding:16px 18px;margin:0 0 18px;color:#232f33}
+  .passage p{margin:0 0 12px}.passage p:last-child{margin-bottom:0}
+  .speaker{font-family:'Inter';font-weight:700;color:var(--teal-deep);font-size:14px;display:block;margin-bottom:2px}
+  .gaptext{font-family:Georgia,serif;font-size:16.5px;line-height:2.5;color:#232f33}
+  select.gap{font-family:'Inter';font-weight:600;font-size:14px;color:var(--teal-deep);border:1px solid var(--teal);background:var(--marker-soft);border-radius:8px;padding:5px 8px;margin:0 2px;cursor:pointer}
+
+  .q{border-top:1px solid var(--line);padding:14px 0}.q:first-of-type{border-top:none}
+  .q-text{font-weight:500;margin:0 0 10px;font-size:15.5px}
+  .q-num{color:var(--teal);font-weight:700;margin-right:6px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opt input{position:absolute;opacity:0;pointer-events:none}
+  .opt label{display:inline-block;border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:10px;cursor:pointer;font-size:14.5px;font-weight:500;transition:.12s}
+  .opt input:checked + label{background:var(--marker-soft);border-color:var(--teal);color:var(--teal-deep);font-weight:600}
+  .opt label:hover{border-color:var(--teal)}
+
+  .order-row{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding:12px 0}.order-row:first-of-type{border-top:none}
+  select.pos{font-family:'Fraunces',serif;font-weight:600;font-size:16px;color:var(--teal-deep);border:1px solid var(--teal);background:var(--marker-soft);border-radius:9px;padding:8px 6px;min-width:58px;text-align:center;cursor:pointer}
+  .order-row .sent{font-family:Georgia,serif;font-size:15.5px;padding-top:8px;color:#232f33}
+  .fixed-sent{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--line);margin-bottom:4px}
+  .fixed-badge{font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:#fff;background:var(--teal);min-width:58px;text-align:center;padding:8px 6px;border-radius:9px}
+  .fixed-sent .sent{font-family:Georgia,serif;font-size:15.5px;padding-top:8px;font-style:italic;color:#232f33}
+
+  .bank{background:var(--marker-soft);border-radius:10px;padding:12px 16px;margin:0 0 16px;font-size:14px}
+  .bank b{display:block;color:var(--teal-deep);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+  .bank ul{margin:0;padding-left:18px;columns:2;column-gap:20px}
+  .bank li{margin:3px 0;break-inside:avoid}
+  select.head{font-family:'Inter';font-weight:600;font-size:14px;color:var(--teal-deep);border:1px solid var(--teal);background:var(--marker-soft);border-radius:8px;padding:8px 10px;max-width:100%;cursor:pointer;margin-top:8px}
+  .para-block{border-top:1px solid var(--line);padding:14px 0}.para-block:first-of-type{border-top:none}
+  .para-label{font-weight:700;color:var(--teal);font-size:13px;letter-spacing:.05em;text-transform:uppercase}
+
+  .fb{margin-top:10px;border-radius:10px;padding:11px 14px;font-size:14px;display:none}.fb.show{display:block}
+  .fb.ok{background:var(--correct-bg);border:1px solid #bfe3cd}.fb.no{background:var(--wrong-bg);border:1px solid #f0cdc7}
+  .fb .verdict{font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;margin-bottom:4px}
+  .fb.ok .verdict{color:var(--correct)}.fb.no .verdict{color:var(--wrong)}
+  .fb .ans{color:var(--ink);margin-bottom:5px}.fb .why{color:var(--ink-soft)}
+  .q.graded-ok,.order-row.graded-ok,.para-block.graded-ok{background:linear-gradient(90deg,var(--correct-bg),transparent 40%);border-radius:8px}
+  .q.graded-no,.order-row.graded-no,.para-block.graded-no{background:linear-gradient(90deg,var(--wrong-bg),transparent 40%);border-radius:8px}
+
+  .bar{position:fixed;left:0;right:0;bottom:0;background:rgba(238,240,234,.93);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:14px 20px;z-index:20}
+  .bar-inner{max-width:880px;margin:0 auto;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .progress{font-size:13px;color:var(--ink-soft)}.progress b{color:var(--ink)}
+  .btns{display:flex;gap:10px}
+  button.act{font-family:'Inter';font-weight:600;font-size:15px;border-radius:11px;padding:12px 22px;cursor:pointer;border:1px solid transparent;transition:.15s}
+  .btn-primary{background:var(--teal);color:#fff}.btn-primary:hover{background:var(--teal-deep)}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border-color:var(--line)}.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
+
+  .score{background:var(--teal);color:#fff;border-radius:16px;padding:24px;margin-top:18px;box-shadow:var(--shadow);display:none}.score.show{display:block}
+  .score .big{font-family:'Fraunces',serif;font-size:52px;font-weight:600;line-height:1}.score .big span{font-size:26px;opacity:.7}
+  .score .band{display:inline-block;background:var(--marker);color:var(--teal-deep);font-weight:700;font-size:13px;padding:5px 12px;border-radius:20px;margin-top:10px}
+  .score .breakdown{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
+  .score .chip{background:rgba(255,255,255,.14);border-radius:10px;padding:8px 12px;font-size:13px}.score .chip b{display:block;font-size:18px;font-family:'Fraunces',serif}
+  .score .note{font-size:12.5px;opacity:.82;margin-top:14px}
+
+  @media(max-width:560px){.bank ul{columns:1}.part{padding:18px 16px}.gaptext,.passage,.order-row .sent,.fixed-sent .sent{font-size:15px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Aptis General · Reading · Level B2–C</p>
+    <h1>Reading nâng cao — 5 đề, <span class="mark">tự chấm &amp; giải thích</span></h1>
+    <p class="sub">Năm đề trình độ B2–C với bài đọc dài hơn và từ vựng học thuật. Chọn một đề, làm bài, bấm <b>Nộp bài &amp; xem kết quả</b> để xem điểm và giải thích tiếng Việt cho từng câu.</p>
+  </header>
+  <div class="tabs" id="tabs" role="tablist" aria-label="Chọn đề"></div>
+  <div id="test-container"></div>
+  <div class="score" id="scoreCard"></div>
+</div>
+
+<div class="bar"><div class="bar-inner">
+  <div class="progress" id="progress">Đã chọn <b>0</b>/25 câu</div>
+  <div class="btns">
+    <button class="act btn-ghost" id="resetBtn">Làm lại</button>
+    <button class="act btn-primary" id="submitBtn">Nộp bài &amp; xem kết quả</button>
+  </div>
+</div></div>
+
+<script>
+const META={
+ 1:"Đề 1 — Khoa học & Công nghệ",
+ 2:"Đề 2 — Môi trường & Thiên nhiên",
+ 3:"Đề 3 — Xã hội, Công việc & Văn hóa",
+ 4:"Đề 4 — Sức khỏe, Trí óc & Tâm lý",
+ 5:"Đề 5 — Nghệ thuật, Lịch sử & Ý tưởng"
+};
+
+/* ============================ DỮ LIỆU 5 ĐỀ ============================ */
+const TESTS={
+/* ---------- ĐỀ 1: KHOA HỌC & CÔNG NGHỆ ---------- */
+1:{
+ part1:{title:"Sentence completion",instr:"Đọc đoạn văn và chọn từ/cụm từ đúng cho mỗi chỗ trống.",
+  lines:[
+   {t:"Artificial intelligence has advanced at a remarkable pace over the past decade. While early systems could only perform narrow tasks, modern models are capable "},{g:0},
+   {t:" generating fluent text, images and even computer code. This progress has "},{g:1},
+   {t:" concerns about the impact on employment, as machines increasingly "},{g:2},
+   {t:" work once done by humans. Nevertheless, many experts argue that AI will "},{g:3},
+   {t:" new opportunities rather than simply eliminating jobs. What is certain is that societies must "},{g:4},
+   {t:" to a world in which intelligent machines play an ever-greater role."}],
+  questions:[
+   {opts:["of","for","in"],ans:0,why:"<b>be capable OF + V-ing</b> = có khả năng làm gì. Giới từ cố định là “of”; “capable for/in” đều sai."},
+   {opts:["raised","lifted","grown"],ans:0,why:"<b>raise concerns</b> = làm dấy lên lo ngại. “lift/grow concerns” không phải collocation."},
+   {opts:["take over","take after","take up"],ans:0,why:"<b>take over work</b> = tiếp quản/thay thế công việc (once done by humans = vốn do con người làm). “take after” = giống (người thân); “take up” = bắt đầu (sở thích)."},
+   {opts:["create","invent","build"],ans:0,why:"<b>create opportunities</b> = tạo ra cơ hội. “invent/build opportunities” không tự nhiên."},
+   {opts:["adapt","adopt","improve"],ans:0,why:"<b>adapt TO sth</b> = thích nghi với. “adopt” = nhận nuôi/áp dụng; “improve to” sai ngữ pháp."}]},
+ part2:{title:"Text cohesion — sắp xếp câu",instr:"Câu 1 đã cố định. Chọn vị trí (2–7) cho mỗi câu để tạo đoạn văn mạch lạc.",
+  fixed:"The invention of the printing press in the fifteenth century transformed the way knowledge spread across Europe.",
+  items:[
+   {text:"Gutenberg's machine changed this situation almost overnight.",pos:4},
+   {text:"In time, the spread of literacy would reshape religion, science and politics alike.",pos:7},
+   {text:"Before its arrival, books had to be copied out laboriously by hand, making them rare and expensive.",pos:2},
+   {text:"This flood of affordable books helped ordinary people learn to read.",pos:6},
+   {text:"As a result, only the wealthy and the clergy could afford to own them.",pos:3},
+   {text:"Suddenly, texts could be produced in large quantities at a fraction of the cost.",pos:5}],
+  why:"Bám vào từ nối & tham chiếu: “Before its arrival” (2) → “As a result” (3, hệ quả: chỉ người giàu và giới tăng lữ có sách) → “Gutenberg's machine changed this situation” (4) → “Suddenly… mass production” (5) → “This flood of affordable books” (6) → “In time… reshape society” (7)."},
+ part3:{title:"Opinion matching — bốn chuyên gia",instr:"Bốn chuyên gia bàn về việc chi tiền cho khám phá vũ trụ. Với mỗi câu, chọn người phù hợp (A–D).",
+  people:[
+   {name:"A — Dr Nguyen (astrophysicist)",text:"Critics often dismiss space programmes as an extravagant luxury, but this overlooks their tangible benefits. Countless everyday technologies, from weather forecasting to satellite navigation, are direct spin-offs of space research. Abandoning exploration would mean forfeiting innovations we cannot yet imagine."},
+   {name:"B — Prof. Adeyemi (economist)",text:"I don't dispute that space research yields useful by-products. My concern is one of priorities. When millions still lack clean water and basic healthcare, channelling vast sums into distant planets strikes me as difficult to justify morally, however exciting the science may be."},
+   {name:"C — Ms Larsson (engineer)",text:"Frankly, the private sector has changed everything. Governments no longer need to shoulder the entire cost, because competition between companies has driven prices down dramatically. Space is becoming a viable industry, not merely a drain on public funds."},
+   {name:"D — Mr Okafor (environmentalist)",text:"What worries me is that the rush to explore other worlds distracts us from repairing our own. We talk of colonising Mars while neglecting the planet we already inhabit. Our energy would be far better spent healing the damage here on Earth."}],
+  questions:[
+   {q:"Who claims useful inventions have come out of space research?",ans:0,why:"A: các công nghệ hằng ngày (dự báo thời tiết, định vị vệ tinh) là “spin-offs” (sản phẩm phái sinh) của nghiên cứu vũ trụ."},
+   {q:"Who raises a moral concern about how the money is spent?",ans:1,why:"B: “difficult to justify morally” khi hàng triệu người thiếu nước sạch và y tế cơ bản."},
+   {q:"Who believes competition has made space cheaper?",ans:2,why:"C: “competition between companies has driven prices down dramatically” = cạnh tranh kéo giá xuống mạnh."},
+   {q:"Who worries that space projects distract us from Earth's problems?",ans:3,why:"D: “distracts us from repairing our own” — sao nhãng việc chữa lành chính Trái Đất."},
+   {q:"Who acknowledges space research is useful but still objects to it?",ans:1,why:"B: “I don't dispute… useful by-products. My concern is one of priorities” — thừa nhận có ích nhưng phản đối vì thứ tự ưu tiên."},
+   {q:"Who thinks space is turning into a genuine industry?",ans:2,why:"C: “a viable industry, not merely a drain on public funds” = một ngành khả thi chứ không chỉ là gánh nặng ngân sách."},
+   {q:"Who warns against giving up exploration altogether?",ans:0,why:"A: “Abandoning exploration would mean forfeiting innovations” = từ bỏ đồng nghĩa đánh mất phát minh tương lai."}]},
+ part4:{title:"Heading matching — ghép tiêu đề",instr:"Bài đọc có 7 đoạn. Chọn tiêu đề phù hợp nhất cho mỗi đoạn. Có 1 tiêu đề thừa.",
+  bank:["Growing pressure to abandon fossil fuels","The falling cost of solar power","Harnessing the power of the wind","The problem of storing energy","Rebuilding the electricity network","New possibilities for poorer nations","Looking ahead to a cleaner future","The dangers of nuclear power"],
+  paras:[
+   {text:"For more than a century, industrial societies have relied overwhelmingly on coal, oil and gas. Yet mounting evidence of climate change, together with concerns over air pollution and finite reserves, has made this dependence increasingly untenable. Around the world, governments and businesses are searching for cleaner alternatives.",ans:0,why:"Nêu lý do sự phụ thuộc vào than/dầu/khí trở nên “untenable” (không thể duy trì) ⇒ áp lực từ bỏ nhiên liệu hóa thạch."},
+   {text:"Among the most promising of these alternatives is solar energy. The cost of photovoltaic panels has plummeted over the past decade, falling by roughly ninety per cent. As a result, generating electricity from sunlight is now cheaper than burning coal in many regions.",ans:1,why:"“cost… has plummeted… falling by ninety per cent” = chi phí pin mặt trời lao dốc."},
+   {text:"Wind power has followed a similar trajectory. Vast turbines, some taller than skyscrapers, now dot coastlines and open plains. Offshore wind farms, in particular, can harness stronger and steadier breezes, making them an especially reliable source of clean electricity.",ans:2,why:"Turbines, offshore wind farms, harness breezes = khai thác sức gió."},
+   {text:"Renewables do, however, present a significant challenge: the sun does not always shine, nor does the wind always blow. To keep the lights on during calm, cloudy periods, electricity must be stored on a massive scale. Advances in battery technology are gradually making this possible.",ans:3,why:"“electricity must be stored… battery technology” = vấn đề lưu trữ năng lượng."},
+   {text:"Integrating these variable sources into national power networks is no simple matter. Existing grids were designed for a handful of large power stations, not thousands of scattered solar rooftops and wind farms. Upgrading this infrastructure requires enormous investment and careful planning.",ans:4,why:"“Integrating… into national power networks… Upgrading this infrastructure” = xây lại/nâng cấp lưới điện."},
+   {text:"For developing nations, the shift offers a remarkable opportunity. Rather than constructing costly networks of pipelines and power plants, some countries are leapfrogging straight to decentralised solar systems, bringing electricity to remote villages for the first time.",ans:5,why:"“For developing nations… leapfrogging straight to decentralised solar” (leapfrog = nhảy vọt, bỏ qua giai đoạn) = cơ hội cho các nước nghèo."},
+   {text:"The road ahead is not without obstacles, and fossil fuels will not disappear overnight. Nevertheless, the direction of travel is now unmistakable. With every passing year, clean energy grows cheaper, more efficient and more widespread, hinting at a future powered largely by the wind and the sun.",ans:6,why:"“the direction of travel is unmistakable… a future powered by wind and sun” = hướng tới tương lai sạch hơn. (Tiêu đề thừa: “The dangers of nuclear power” — không đoạn nào nói về điện hạt nhân.)"}]}
+},
+
+/* ---------- ĐỀ 2: MÔI TRƯỜNG & THIÊN NHIÊN ---------- */
+2:{
+ part1:{title:"Sentence completion",instr:"Đọc đoạn văn và chọn từ/cụm từ đúng cho mỗi chỗ trống.",
+  lines:[
+   {t:"The world's coral reefs are among the most diverse ecosystems on the planet, yet they are increasingly "},{g:0},
+   {t:" risk. Rising sea temperatures cause corals to expel the algae that "},{g:1},
+   {t:" them with food and colour — a process known as bleaching. If conditions fail to improve, the corals eventually "},{g:2},
+   {t:" altogether. Conservationists are racing to protect these fragile habitats, but their efforts will "},{g:3},
+   {t:" little unless global emissions fall. The fate of the reefs, they warn, "},{g:4},
+   {t:" largely on decisions made in the world's largest economies."}],
+  questions:[
+   {opts:["at","in","on"],ans:0,why:"<b>at risk</b> = có nguy cơ (thành ngữ cố định). “in/on risk” đều sai."},
+   {opts:["provide","give","bring"],ans:0,why:"<b>provide sb WITH sth</b> = cung cấp cho. “give/bring them with” sai cấu trúc."},
+   {opts:["die off","pass away","fall out"],ans:0,why:"<b>die off</b> = chết hàng loạt (dùng cho quần thể sinh vật). “pass away” dùng cho người; “fall out” = rơi ra/cãi nhau."},
+   {opts:["count for","stand for","make for"],ans:0,why:"<b>count for little</b> = chẳng có mấy giá trị. “stand for” = tượng trưng; “make for” = hướng về/góp phần."},
+   {opts:["hinges","focuses","results"],ans:0,why:"<b>hinge ON sth</b> = phụ thuộc hoàn toàn vào. “focus on” (tập trung) và “result” (result FROM) không hợp nghĩa/giới từ."}]},
+ part2:{title:"Text cohesion — sắp xếp câu",instr:"Câu 1 đã cố định. Chọn vị trí (2–7) cho mỗi câu để tạo đoạn văn mạch lạc.",
+  fixed:"In recent years, an ambitious idea known as 'rewilding' has gained support among conservationists.",
+  items:[
+   {text:"To the surprise of many, their return transformed the entire ecosystem.",pos:5},
+   {text:"The concept involves returning areas of land to their natural state and reintroducing species that once lived there.",pos:2},
+   {text:"This remarkable chain of events has since inspired similar projects across the globe.",pos:7},
+   {text:"There, wolves were released back into the wild after an absence of nearly seventy years.",pos:4},
+   {text:"With wolves controlling the deer population, forests and rivers slowly began to recover.",pos:6},
+   {text:"One of the most famous examples took place in Yellowstone National Park in the 1990s.",pos:3}],
+  why:"“The concept involves…” định nghĩa khái niệm (2) → “One of the most famous examples… Yellowstone” (3) → “There, wolves were released” (4, “There” nối với Yellowstone) → “their return transformed…” (5) → “With wolves controlling the deer…” (6, hệ quả) → “This… chain of events… inspired…” (7)."},
+ part3:{title:"Opinion matching — bốn người",instr:"Bốn người bàn về việc có nên cấm ô tô cá nhân trong trung tâm thành phố. Với mỗi câu, chọn người phù hợp (A–D).",
+  people:[
+   {name:"A — Elena",text:"I wholeheartedly support the idea. Our city centre is choked with traffic and the air is barely breathable. Pedestrianising the streets would make them safer, quieter and far more pleasant. Cities that have already done so report a real boost to local shops."},
+   {name:"B — Raj",text:"In principle I'm sympathetic, but we mustn't forget the elderly and the disabled, who rely on cars to get around. A blanket ban risks shutting them out of the city altogether. Any scheme has to include exemptions for those who genuinely need them."},
+   {name:"C — Marta",text:"People always resist these changes at first, then wonder how they ever managed without them. The key is investing in public transport beforehand. If buses and trains are frequent and affordable, most drivers will happily leave their cars at home."},
+   {name:"D — Tom",text:"I run a delivery business, so I'll be honest — a ban would make my life much harder. It's easy for people who don't depend on vehicles for their livelihood to be enthusiastic. Someone needs to think about the practical consequences for local businesses like mine."}],
+  questions:[
+   {q:"Who supports the ban most enthusiastically?",ans:0,why:"A: “I wholeheartedly support the idea” và mô tả phố đi bộ an toàn, dễ chịu hơn."},
+   {q:"Who is concerned about people with limited mobility?",ans:1,why:"B: lo cho “the elderly and the disabled, who rely on cars” — người cao tuổi và người khuyết tật."},
+   {q:"Who believes good public transport must come first?",ans:2,why:"C: “The key is investing in public transport beforehand.”"},
+   {q:"Who fears the ban would harm their own business?",ans:3,why:"D: “I run a delivery business… a ban would make my life much harder.”"},
+   {q:"Who says objections usually fade once changes are made?",ans:2,why:"C: “People always resist… at first, then wonder how they ever managed without them.”"},
+   {q:"Who argues that certain groups should be exempt?",ans:1,why:"B: “Any scheme has to include exemptions” = cần có ngoại lệ (exemption = miễn trừ)."},
+   {q:"Who mentions benefits to local shops?",ans:0,why:"A: “a real boost to local shops” = cú hích cho cửa hàng địa phương."}]},
+ part4:{title:"Heading matching — ghép tiêu đề",instr:"Bài đọc có 7 đoạn. Chọn tiêu đề phù hợp nhất cho mỗi đoạn. Có 1 tiêu đề thừa.",
+  bank:["Rethinking how forests work","An underground network","Helping the weakest survive","Sending warnings of danger","The role of the oldest trees","Lessons for how we manage forests","A new way of seeing nature","The threat of forest fires"],
+  paras:[
+   {text:"For centuries, we have regarded trees as solitary organisms, each competing silently with its neighbours for light and water. Recent research, however, has overturned this view, revealing a forest to be a far more cooperative and interconnected place than anyone had imagined.",ans:0,why:"“overturned this view… far more cooperative and interconnected” = nghĩ lại về cách rừng vận hành."},
+   {text:"Beneath the forest floor lies a vast, hidden web of fungal threads. These threads connect the roots of different trees, forming an underground network that some scientists have playfully dubbed the 'wood wide web'. Through it, trees can exchange resources and information.",ans:1,why:"“a hidden web of fungal threads… an underground network” = mạng lưới ngầm."},
+   {text:"Perhaps the most striking discovery is that trees share food with one another. A tall tree basking in sunlight may pass sugars through the network to a struggling seedling in the shade below. In this way, the strong help sustain the weak.",ans:2,why:"“the strong help sustain the weak” = cây khỏe nuôi cây yếu ⇒ giúp kẻ yếu nhất sống sót."},
+   {text:"The network also serves as an early-warning system. When a tree is attacked by insects, it can send chemical signals to its neighbours, which then begin producing defensive substances of their own. Forewarned, they are better prepared to resist the threat.",ans:3,why:"“an early-warning system… send chemical signals” = phát tín hiệu cảnh báo nguy hiểm."},
+   {text:"At the heart of this system are the oldest and largest specimens, sometimes called 'mother trees'. These giants are connected to hundreds of others and appear to nurture the younger generation, favouring their own offspring with extra resources.",ans:4,why:"“the oldest and largest specimens… 'mother trees'… nurture the younger generation” = vai trò của cây lâu năm nhất."},
+   {text:"These findings have important consequences for how we manage woodlands. Clearing a forest of its ancient trees, it turns out, may sever the very connections on which the whole community depends. A more thoughtful approach to logging is urgently needed.",ans:5,why:"“how we manage woodlands… a more thoughtful approach to logging” = bài học cho việc quản lý rừng."},
+   {text:"Beyond their practical value, such discoveries invite us to see nature differently. A forest, it seems, is not a collection of isolated individuals but a single, living community — a reminder that cooperation, not just competition, shapes the natural world.",ans:6,why:"“invite us to see nature differently… a single, living community” = cách nhìn mới về thiên nhiên. (Tiêu đề thừa: “The threat of forest fires” — không đoạn nào nói về cháy rừng.)"}]}
+},
+
+/* ---------- ĐỀ 3: XÃ HỘI, CÔNG VIỆC & VĂN HÓA ---------- */
+3:{
+ part1:{title:"Sentence completion",instr:"Đọc đoạn văn và chọn từ/cụm từ đúng cho mỗi chỗ trống.",
+  lines:[
+   {t:"The nature of work has undergone profound changes in recent decades. Whereas previous generations often spent their entire careers with a single employer, today's workers are far more likely to "},{g:0},
+   {t:" jobs several times. The rise of the so-called 'gig economy' has "},{g:1},
+   {t:" in a new era of flexible but insecure employment. Meanwhile, automation continues to "},{g:2},
+   {t:" certain roles obsolete, forcing employees to acquire new skills. Those who fail to "},{g:3},
+   {t:" up with these changes may find themselves left behind. Adaptability, it seems, has become the most valuable "},{g:4},
+   {t:" a worker can possess."}],
+  questions:[
+   {opts:["change","turn","shift"],ans:0,why:"<b>change jobs</b> = đổi việc. “turn/shift jobs” không phải collocation chuẩn."},
+   {opts:["ushered","opened","welcomed"],ans:0,why:"<b>usher in</b> = mở ra/khởi đầu (một thời kỳ). “opened/welcomed in” không đúng thành ngữ."},
+   {opts:["render","turn","leave"],ans:0,why:"<b>render sth + adjective</b> = khiến cho (render roles obsolete = khiến vai trò trở nên lỗi thời). “turn” cần “into”; “leave obsolete” không tự nhiên."},
+   {opts:["keep","hold","stand"],ans:0,why:"<b>keep up WITH</b> = theo kịp. “hold/stand up with” không tồn tại theo nghĩa này."},
+   {opts:["asset","benefit","profit"],ans:0,why:"<b>asset</b> = tài sản/thế mạnh (a valuable asset). “possess a benefit/profit” không hợp nghĩa."}]},
+ part2:{title:"Text cohesion — sắp xếp câu",instr:"Câu 1 đã cố định. Chọn vị trí (2–7) cho mỗi câu để tạo đoạn văn mạch lạc.",
+  fixed:"Most of us take the two-day weekend for granted, yet it is a surprisingly recent invention.",
+  items:[
+   {text:"The idea eventually spread around the world, becoming the norm we recognise today.",pos:6},
+   {text:"This began to change during the Industrial Revolution, as factory workers demanded more free time.",pos:3},
+   {text:"Now, some argue that the time has come to shorten the working week even further.",pos:7},
+   {text:"For much of history, people worked six days a week, resting only on Sunday for religious reasons.",pos:2},
+   {text:"By the early twentieth century, a growing number of companies had adopted a shorter week.",pos:5},
+   {text:"Employers gradually realised that well-rested workers were, in fact, more productive.",pos:4}],
+  why:"Trình tự thời gian: quá khứ làm 6 ngày (2) → “This began to change during the Industrial Revolution” (3) → “Employers gradually realised…” (4) → “By the early twentieth century…” (5) → “eventually spread… became the norm” (6) → “Now… shorten further” (7)."},
+ part3:{title:"Opinion matching — bốn người",instr:"Bốn người bàn về việc bằng đại học còn đáng giá hay không. Với mỗi câu, chọn người phù hợp (A–D).",
+  people:[
+   {name:"A — Priya",text:"I'll admit that university isn't for everyone, but the experience gave me far more than a qualification. I learned to think critically, to manage my time and to live independently. You simply can't put a price on that kind of personal growth."},
+   {name:"B — Daniel",text:"Honestly, I think we've oversold the idea. Many graduates end up saddled with enormous debt, only to take jobs that never required a degree in the first place. For a lot of practical careers, an apprenticeship offers far better value."},
+   {name:"C — Fatima",text:"It really depends on the field. If you want to be a doctor or an engineer, of course a degree is essential. But in creative and technical industries, employers increasingly care about what you can actually do, not the certificate on your wall."},
+   {name:"D — Greg",text:"The world is changing so fast that specific knowledge quickly goes out of date. What matters now is the ability to keep learning throughout your life. In that sense, a single degree earned at eighteen is no longer enough on its own."}],
+  questions:[
+   {q:"Who values the personal skills gained at university?",ans:0,why:"A: “think critically… manage my time… live independently… personal growth” — coi trọng kỹ năng cá nhân."},
+   {q:"Who thinks too many people are pushed towards university?",ans:1,why:"B: “we've oversold the idea” và nhắc tới nợ nần, việc làm không cần bằng."},
+   {q:"Who says the answer depends on the profession?",ans:2,why:"C: “It really depends on the field” — bác sĩ/kỹ sư cần bằng, ngành sáng tạo thì không hẳn."},
+   {q:"Who believes lifelong learning matters more than one qualification?",ans:3,why:"D: “the ability to keep learning throughout your life” quan trọng hơn một tấm bằng duy nhất."},
+   {q:"Who mentions the problem of student debt?",ans:1,why:"B: “saddled with enormous debt” = gánh khoản nợ khổng lồ."},
+   {q:"Who thinks employers increasingly value practical ability?",ans:2,why:"C: “employers increasingly care about what you can actually do” = coi trọng năng lực thực tế."},
+   {q:"Who feels university offers more than just the degree?",ans:0,why:"A: “far more than a qualification” = nhiều hơn một tấm bằng."}]},
+ part4:{title:"Heading matching — ghép tiêu đề",instr:"Bài đọc có 7 đoạn. Chọn tiêu đề phù hợp nhất cho mỗi đoạn. Có 1 tiêu đề thừa.",
+  bank:["A universal human trait","A tool for survival","Learning to understand others","The persuasive power of narrative","How the brain responds to stories","Storytelling in a digital world","Why stories still matter","The decline of reading"],
+  paras:[
+   {text:"From ancient myths told around the fire to the films we stream today, human beings have always been storytellers. No known society, however remote, has ever been found without stories. This universality suggests that storytelling is not a mere pastime but something deeply rooted in our nature.",ans:0,why:"“No known society… without stories… deeply rooted in our nature” = đặc điểm phổ quát của loài người."},
+   {text:"Why should this be so? One theory holds that stories evolved as a way of passing on vital knowledge. Long before written records, a well-told tale could teach listeners which plants were poisonous or how to survive a harsh winter — lessons far easier to remember when wrapped in narrative.",ans:1,why:"“stories evolved as a way of passing on vital knowledge… how to survive” = công cụ sinh tồn."},
+   {text:"Stories also allow us to rehearse social situations from the safety of our imagination. By following characters through conflict and cooperation, we learn to predict how others might behave and to understand feelings different from our own. In this sense, fiction is a kind of practice for real life.",ans:2,why:"“understand feelings different from our own” = học cách thấu hiểu người khác."},
+   {text:"There is a reason politicians and advertisers rely so heavily on narrative. Facts alone are quickly forgotten, but a story lodges in the memory and stirs the emotions. A single vivid anecdote can prove more persuasive than a mountain of statistics.",ans:3,why:"“more persuasive than a mountain of statistics” = sức mạnh thuyết phục của kể chuyện."},
+   {text:"Modern neuroscience lends support to these ideas. Brain scans reveal that when we become absorbed in a story, the regions associated with the events described light up as though we were experiencing them ourselves. To the brain, a gripping tale is almost indistinguishable from reality.",ans:4,why:"“Brain scans reveal… regions… light up” = phản ứng của não bộ với chuyện kể."},
+   {text:"In the digital age, the appetite for stories shows no sign of fading. If anything, new technologies have multiplied the ways we can tell and share them, from video games that place us inside the plot to short clips shared instantly across the globe.",ans:5,why:"“In the digital age… video games… short clips shared instantly” = kể chuyện thời đại số."},
+   {text:"Whatever form they take, stories remain one of the most powerful tools we possess. They shape our beliefs, bind communities together and help us make sense of a complicated world. To tell a story, it seems, is to be fully human.",ans:6,why:"“stories remain one of the most powerful tools… make sense of the world” = vì sao chuyện kể vẫn quan trọng. (Tiêu đề thừa: “The decline of reading” — không đoạn nào bàn về sự sa sút của việc đọc.)"}]}
+},
+
+/* ---------- ĐỀ 4: SỨC KHỎE, TRÍ ÓC & TÂM LÝ ---------- */
+4:{
+ part1:{title:"Sentence completion",instr:"Đọc đoạn văn và chọn từ/cụm từ đúng cho mỗi chỗ trống.",
+  lines:[
+   {t:"Scientists have long known that sleep is essential to health, but only recently have they begun to grasp quite how much "},{g:0},
+   {t:" on it. Far from being a passive state, sleep is when the brain "},{g:1},
+   {t:" the day's memories and clears away harmful waste. People who are chronically "},{g:2},
+   {t:" of sleep are at greater risk of a range of illnesses, from heart disease to depression. Despite this, modern lifestyles often "},{g:3},
+   {t:" rest a low priority. Experts therefore urge us to "},{g:4},
+   {t:" good sleep as seriously as we take diet and exercise."}],
+  questions:[
+   {opts:["depends","counts","leans"],ans:0,why:"<b>depend ON</b> = phụ thuộc vào (how much depends on it). “count/lean” không hợp nghĩa/giới từ ở đây."},
+   {opts:["consolidates","collects","gathers"],ans:0,why:"<b>consolidate memories</b> = củng cố/cố định ký ức (thuật ngữ). “collect/gather” chỉ là “thu nhặt”, không diễn tả quá trình này."},
+   {opts:["deprived","robbed","emptied"],ans:0,why:"<b>be deprived OF sth</b> = bị thiếu/tước đoạt (sleep-deprived = thiếu ngủ). “robbed of” hiếm khi dùng với “sleep”; “emptied of” sai nghĩa."},
+   {opts:["make","put","hold"],ans:0,why:"<b>make sth a priority</b> = coi… là ưu tiên. “put/hold rest a low priority” sai cấu trúc."},
+   {opts:["take","make","have"],ans:0,why:"<b>take sth seriously</b> = coi trọng. “make/have… seriously” không đúng."}]},
+ part2:{title:"Text cohesion — sắp xếp câu",instr:"Câu 1 đã cố định. Chọn vị trí (2–7) cho mỗi câu để tạo đoạn văn mạch lạc.",
+  fixed:"In the 1960s, a psychologist named Walter Mischel devised one of the most famous experiments in the history of the field.",
+  items:[
+   {text:"Some children resisted temptation, while others gave in almost immediately.",pos:4},
+   {text:"Remarkably, those who had waited tended to do better at school and in their careers.",pos:6},
+   {text:"He offered young children a single marshmallow, which they could eat straight away.",pos:2},
+   {text:"Years later, Mischel followed up on the same children to see how their lives had turned out.",pos:5},
+   {text:"The study is still cited today as evidence of the importance of self-control.",pos:7},
+   {text:"However, if they managed to wait fifteen minutes without eating it, they would receive a second one.",pos:3}],
+  why:"“He offered… a single marshmallow… eat straight away” (2) → “However, if they waited… a second one” (3) → “Some children resisted… others gave in” (4) → “Years later… followed up” (5) → “Remarkably, those who had waited…” (6) → “still cited today” (7)."},
+ part3:{title:"Opinion matching — bốn người",instr:"Bốn người bàn về việc tiền có mua được hạnh phúc không. Với mỗi câu, chọn người phù hợp (A–D).",
+  people:[
+   {name:"A — Sophia",text:"Up to a point, it clearly does. Constant worry about paying the rent or feeding your family is exhausting and demoralising. Once people can comfortably meet their basic needs, though, extra income seems to make surprisingly little difference to their overall contentment."},
+   {name:"B — Marcus",text:"I think we focus far too much on money and not nearly enough on how we spend our time. In my experience, the happiest people are those with strong relationships and a genuine sense of purpose — things that no amount of wealth can guarantee."},
+   {name:"C — Yuki",text:"It's not about how much you earn but what you do with it. Studies show that spending money on experiences, or on other people, brings far more lasting joy than buying yet another possession. We're simply spending it on the wrong things."},
+   {name:"D — Ahmed",text:"Honestly, I'm suspicious of the claim that money doesn't matter — it's usually made by people who already have plenty. For someone struggling to get by, a decent pay rise could be genuinely life-changing. We shouldn't romanticise poverty."}],
+  questions:[
+   {q:"Who says money matters most for meeting basic needs?",ans:0,why:"A: khi đã lo đủ nhu cầu cơ bản thì “extra income… make surprisingly little difference”."},
+   {q:"Who believes relationships matter more than wealth?",ans:1,why:"B: “the happiest people are those with strong relationships and a genuine sense of purpose”."},
+   {q:"Who thinks it's how we spend money that counts?",ans:2,why:"C: “It's not about how much you earn but what you do with it.”"},
+   {q:"Who is sceptical of the idea that money is unimportant?",ans:3,why:"D: “I'm suspicious of the claim that money doesn't matter.”"},
+   {q:"Who recommends spending on experiences or on others?",ans:2,why:"C: “spending money on experiences, or on other people, brings far more lasting joy”."},
+   {q:"Who points out that extra income has little effect once we are comfortable?",ans:0,why:"A: “Once people can comfortably meet their basic needs… little difference”."},
+   {q:"Who warns against making poverty seem noble?",ans:3,why:"D: “We shouldn't romanticise poverty” = đừng lãng mạn hóa/tô hồng cái nghèo."}]},
+ part4:{title:"Heading matching — ghép tiêu đề",instr:"Bài đọc có 7 đoạn. Chọn tiêu đề phù hợp nhất cho mỗi đoạn. Có 1 tiêu đề thừa.",
+  bank:["A common misunderstanding","The three stages of memory","The value of forgetting","When memories deceive us","The link between emotion and memory","Ways to improve your memory","Memory and who we are","The effects of ageing on the body"],
+  paras:[
+   {text:"Many people imagine memory to be like a video recording, faithfully capturing events for us to replay at will. The reality, as psychologists have discovered, is far messier. Our memories are not fixed records but reconstructions, assembled anew each time we recall them.",ans:0,why:"“imagine memory to be like a video recording… The reality… is far messier” = hiểu lầm phổ biến."},
+   {text:"Broadly speaking, memory works in three stages. First, information must be encoded, or taken in through the senses. It is then stored, sometimes for a lifetime. Finally, it must be retrieved when needed — and it is at this last stage that things often go wrong.",ans:1,why:"“three stages… encoded… stored… retrieved” = ba giai đoạn của trí nhớ."},
+   {text:"Forgetting is usually seen as a failure, yet it serves a valuable purpose. If we remembered every trivial detail of every day, our minds would soon be overwhelmed. By discarding what no longer matters, the brain keeps the information that counts within easy reach.",ans:2,why:"“it serves a valuable purpose… discarding what no longer matters” = giá trị của việc quên."},
+   {text:"More troubling is the discovery that memories can be entirely false. Under the right conditions, people can be convinced they remember events that never happened at all. This has serious implications for the justice system, where eyewitness testimony has long been treated as reliable.",ans:3,why:"“memories can be entirely false… events that never happened” = khi ký ức đánh lừa ta."},
+   {text:"Not all memories are created equal. Emotionally charged events — a wedding, an accident, a moment of great fear — tend to be recalled far more vividly than ordinary ones. The chemicals released during moments of stress appear to strengthen the traces these events leave behind.",ans:4,why:"“Emotionally charged events… recalled far more vividly” = mối liên hệ giữa cảm xúc và trí nhớ."},
+   {text:"Fortunately, there is much we can do to sharpen our recall. Techniques such as linking new facts to vivid images, testing ourselves regularly and getting enough sleep have all been shown to help. Memory, in other words, is a skill that can be trained.",ans:5,why:"“much we can do to sharpen our recall… a skill that can be trained” = cách cải thiện trí nhớ."},
+   {text:"Understanding how memory truly works changes how we see ourselves, for our memories lie at the very heart of our identity. They are not a perfect archive of the past, but a living, shifting story that makes us who we are.",ans:6,why:"“our memories lie at the very heart of our identity… makes us who we are” = trí nhớ và bản ngã. (Tiêu đề thừa: “The effects of ageing on the body” — không đoạn nào nói về lão hóa cơ thể.)"}]}
+},
+
+/* ---------- ĐỀ 5: NGHỆ THUẬT, LỊCH SỬ & Ý TƯỞNG ---------- */
+5:{
+ part1:{title:"Sentence completion",instr:"Đọc đoạn văn và chọn từ/cụm từ đúng cho mỗi chỗ trống.",
+  lines:[
+   {t:"For most of history, works of art were created to serve a purpose — to honour a god, glorify a ruler or decorate a place of worship. The notion of art for its own "},{g:0},
+   {t:" is a comparatively modern one. It was only in recent centuries that paintings came to be "},{g:1},
+   {t:" as objects worthy of admiration in themselves, rather than as tools of religion or power. This shift "},{g:2},
+   {t:" hand in hand with the rise of public museums, which opened the world's treasures to ordinary people for the first time. Today, millions "},{g:3},
+   {t:" galleries each year, and a single famous painting can "},{g:4},
+   {t:" crowds from across the globe."}],
+  questions:[
+   {opts:["sake","good","benefit"],ans:0,why:"<b>art for its own sake</b> = nghệ thuật vị nghệ thuật (thành ngữ “for its own sake”)."},
+   {opts:["regarded","looked","thought"],ans:0,why:"<b>be regarded AS</b> = được xem là. “look/think” cần cấu trúc khác (look upon as / think of as)."},
+   {opts:["went","walked","came"],ans:0,why:"<b>go hand in hand (with)</b> = song hành cùng. Thành ngữ dùng “go”, quá khứ “went”."},
+   {opts:["visit","attend","go"],ans:0,why:"<b>visit galleries</b> = tham quan bảo tàng/phòng tranh. “attend” đi với sự kiện; “go” cần “to”."},
+   {opts:["draw","collect","gather"],ans:0,why:"<b>draw crowds</b> = thu hút đám đông (collocation). “collect/gather crowds” không tự nhiên."}]},
+ part2:{title:"Text cohesion — sắp xếp câu",instr:"Câu 1 đã cố định. Chọn vị trí (2–7) cho mỗi câu để tạo đoạn văn mạch lạc.",
+  fixed:"For centuries, the hieroglyphs carved onto ancient Egyptian monuments remained a complete mystery.",
+  items:[
+   {text:"Everything changed in 1799, when French soldiers unearthed a remarkable stone near the town of Rosetta.",pos:3},
+   {text:"Because Greek could still be read, it offered a vital clue to the unknown symbols.",pos:5},
+   {text:"His breakthrough opened up thousands of years of Egyptian history to the modern world.",pos:7},
+   {text:"Scholars could see the beautiful symbols but had no idea what they meant.",pos:2},
+   {text:"Carved into it was the same message written in three different scripts, one of them Greek.",pos:4},
+   {text:"After years of painstaking work, a scholar named Champollion finally cracked the code.",pos:6}],
+  why:"“Scholars could see the symbols but had no idea…” (2) → “Everything changed in 1799… stone” (3) → “Carved into it… three scripts… Greek” (4) → “Because Greek could be read… a vital clue” (5) → “After years… Champollion cracked the code” (6) → “His breakthrough opened up… history” (7)."},
+ part3:{title:"Opinion matching — bốn người",instr:"Bốn người bàn về việc bảo tàng có nên trả cổ vật về nước xuất xứ. Với mỗi câu, chọn người phù hợp (A–D).",
+  people:[
+   {name:"A — Helena",text:"The case for returning these objects seems to me overwhelming. Many were taken by force during the colonial era, without any consent whatsoever. Keeping them now, however beautifully they are displayed, means profiting from what was essentially theft."},
+   {name:"B — Kwame",text:"I understand the emotional appeal, but we should be practical. Great museums allow millions of visitors to encounter world cultures under one roof. Scatter these collections and that unique educational experience is lost forever."},
+   {name:"C — Sofia",text:"For me the crucial question is who can best care for these fragile treasures. Some countries simply lack the funding or the secure facilities to protect them. Returning an object only for it to be damaged or stolen would help no one."},
+   {name:"D — Ibrahim",text:"This isn't really about display cases or conservation — it's about respect. These artefacts carry the identity and history of a people. To deny a nation its own heritage, whatever the practical arguments, is a profound injustice."}],
+  questions:[
+   {q:"Who believes the objects were often taken unjustly?",ans:0,why:"A: “taken by force… without any consent… essentially theft” = lấy đi một cách bất công."},
+   {q:"Who values seeing many cultures in one place?",ans:1,why:"B: “encounter world cultures under one roof” = nhiều nền văn hóa dưới một mái nhà."},
+   {q:"Who is concerned about how well the artefacts would be protected?",ans:2,why:"C: “lack the funding or the secure facilities to protect them”."},
+   {q:"Who sees the issue mainly as one of respect and identity?",ans:3,why:"D: “it's about respect… the identity and history of a people”."},
+   {q:"Who argues that keeping the objects means benefiting from wrongdoing?",ans:0,why:"A: “profiting from what was essentially theft” = trục lợi từ hành vi vốn là trộm cắp."},
+   {q:"Who worries that returned objects might be damaged?",ans:2,why:"C: “only for it to be damaged or stolen would help no one”."},
+   {q:"Who thinks practical arguments should not outweigh justice?",ans:3,why:"D: “whatever the practical arguments, is a profound injustice” = dù lập luận thực tế thế nào cũng là bất công."}]},
+ part4:{title:"Heading matching — ghép tiêu đề",instr:"Bài đọc có 7 đoạn. Chọn tiêu đề phù hợp nhất cho mỗi đoạn. Có 1 tiêu đề thừa.",
+  bank:["An unexpected threat to painters","Freedom to experiment","The birth of new styles","When photography became art","The power to record events","Why images cannot always be trusted","A lasting partnership","The high cost of early cameras"],
+  paras:[
+   {text:"When photography first appeared in the nineteenth century, many painters greeted it with alarm. If a machine could capture a scene in perfect detail within minutes, they wondered, what possible future could there be for the artist? In fact, the new technology would transform art in ways nobody expected.",ans:0,why:"“many painters greeted it with alarm… what future… for the artist?” = mối đe dọa bất ngờ với họa sĩ."},
+   {text:"Ironically, photography's arrival liberated painting rather than destroying it. Freed from the duty of recording the world exactly as it appeared, artists were now able to experiment. Why struggle to copy reality when a camera could do it better?",ans:1,why:"“liberated painting… able to experiment” = tự do để thử nghiệm."},
+   {text:"This new freedom gave rise to some of the boldest movements in the history of art. The Impressionists abandoned precise detail in favour of light and atmosphere, while later painters distorted colour and form altogether. Art was becoming less about what the eye sees and more about what the artist feels.",ans:2,why:"“gave rise to some of the boldest movements… Impressionists…” = sự ra đời của các trường phái mới."},
+   {text:"Meanwhile, photography itself gradually came to be seen as an art form in its own right. Early photographers demonstrated that the choice of subject, angle and light could express a personal vision, every bit as much as a brushstroke. The camera, it turned out, was not merely a recording device.",ans:3,why:"“photography itself… came to be seen as an art form in its own right” = khi nhiếp ảnh trở thành nghệ thuật."},
+   {text:"Photographs also gave the world something painting never could: an apparently truthful record of events. Images of war, poverty and injustice could now reach distant audiences, stirring public opinion and, at times, prompting real change.",ans:4,why:"“a truthful record of events… stirring public opinion” = sức mạnh ghi lại sự kiện."},
+   {text:"Yet the belief that 'the camera never lies' was always something of an illusion. From the earliest days, photographs could be staged or altered, and in the digital age manipulation has become effortless. We can no longer take even the most convincing image entirely on trust.",ans:5,why:"“'the camera never lies' was… an illusion… manipulation… effortless” = vì sao không thể luôn tin vào hình ảnh."},
+   {text:"More than a century on, the relationship between the two art forms is one of partnership rather than rivalry. Each has influenced and enriched the other, reminding us that new technologies need not destroy old arts — they may, instead, inspire them to reinvent themselves.",ans:6,why:"“a partnership rather than rivalry… enriched the other” = mối quan hệ đối tác bền lâu. (Tiêu đề thừa: “The high cost of early cameras” — không đoạn nào nói về giá máy ảnh thời kỳ đầu.)"}]}
+}
+};
+
+/* ============================ ENGINE ============================ */
+const LETTERS=["A","B","C","D"];
+let currentTest=1, graded=false;
+const container=document.getElementById("test-container");
+
+/* build tabs */
+const tabsEl=document.getElementById("tabs");
+Object.keys(META).forEach(k=>{
+  const b=document.createElement("button");
+  b.className="tab";b.setAttribute("role","tab");b.dataset.test=k;
+  b.setAttribute("aria-selected",k==="1"?"true":"false");
+  const parts=META[k].split(" — ");
+  b.innerHTML=`<span class="t-k">${parts[0]}</span>${parts[1]||META[k]}`;
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected","false"));
+    b.setAttribute("aria-selected","true");
+    currentTest=parseInt(k);
+    document.getElementById("submitBtn").disabled=false;
+    document.getElementById("submitBtn").style.opacity=1;
+    render(currentTest);
+  });
+  tabsEl.appendChild(b);
+});
+
+function escapeHtml(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function partShell(no,title,cefr,instr){
+  const d=document.createElement("section");d.className="part";
+  d.innerHTML=`<div class="part-head"><span class="part-no">${no}</span><h2 class="part-title">Part ${no}: ${escapeHtml(title)}</h2><span class="part-cefr">${cefr}</span></div><p class="instr">${escapeHtml(instr)}</p>`;
+  return d;
+}
+
+function render(testNo){
+  graded=false;
+  document.getElementById("scoreCard").classList.remove("show");
+  const T=TESTS[testNo];container.innerHTML="";
+
+  /* PART 1 */
+  const p1=T.part1;let gapHtml="";
+  p1.lines.forEach(seg=>{
+    if(seg.t!==undefined)gapHtml+=escapeHtml(seg.t);
+    else if(seg.g!==undefined){
+      const q=p1.questions[seg.g];
+      let o=`<select class="gap" data-part="1" data-q="${seg.g}"><option value="">— chọn —</option>`;
+      q.opts.forEach((opt,i)=>{o+=`<option value="${i}">${escapeHtml(opt)}</option>`;});
+      gapHtml+=o+"</select>";
+    }
+  });
+  const part1=partShell(1,p1.title,"B2",p1.instr);
+  part1.insertAdjacentHTML("beforeend",`<div class="passage"><span class="gaptext">${gapHtml}</span></div><div id="p1fb"></div>`);
+  container.appendChild(part1);
+
+  /* PART 2 */
+  const p2=T.part2;const part2=partShell(2,p2.title,"B2",p2.instr);
+  part2.insertAdjacentHTML("beforeend",`<div class="fixed-sent"><span class="fixed-badge">1</span><span class="sent">${escapeHtml(p2.fixed)}</span></div>`);
+  p2.items.forEach((it,i)=>{
+    let sel=`<select class="pos" data-part="2" data-q="${i}"><option value="">?</option>`;
+    for(let n=2;n<=7;n++)sel+=`<option value="${n}">${n}</option>`;
+    part2.insertAdjacentHTML("beforeend",`<div class="order-row" id="p2row${i}">${sel}</select><span class="sent">${escapeHtml(it.text)}</span></div>`);
+  });
+  part2.insertAdjacentHTML("beforeend",`<div id="p2fb"></div>`);
+  container.appendChild(part2);
+
+  /* PART 3 */
+  const p3=T.part3;const part3=partShell(3,p3.title,"B2 – C",p3.instr);
+  let ppl=`<div class="passage">`;
+  p3.people.forEach(pn=>{ppl+=`<p><span class="speaker">${escapeHtml(pn.name)}</span>${escapeHtml(pn.text)}</p>`;});
+  part3.insertAdjacentHTML("beforeend",ppl+"</div>");
+  p3.questions.forEach((q,i)=>{
+    let opts=`<div class="opts">`;
+    LETTERS.forEach((L,li)=>{opts+=`<span class="opt"><input type="radio" name="t${testNo}p3q${i}" id="t${testNo}p3q${i}o${li}" data-part="3" data-q="${i}" value="${li}"><label for="t${testNo}p3q${i}o${li}">${L}</label></span>`;});
+    part3.insertAdjacentHTML("beforeend",`<div class="q" id="p3q${i}"><p class="q-text"><span class="q-num">${i+1}.</span>${escapeHtml(q.q)}</p>${opts}</div></div>`);
+  });
+  container.appendChild(part3);
+
+  /* PART 4 */
+  const p4=T.part4;const part4=partShell(4,p4.title,"C",p4.instr);
+  let bank=`<div class="bank"><b>Danh sách tiêu đề</b><ul>`;
+  p4.bank.forEach(h=>{bank+=`<li>${escapeHtml(h)}</li>`;});
+  part4.querySelector(".instr").insertAdjacentHTML("afterend",bank+"</ul></div>");
+  p4.paras.forEach((pr,i)=>{
+    let sel=`<select class="head" data-part="4" data-q="${i}"><option value="">— chọn tiêu đề —</option>`;
+    p4.bank.forEach((h,hi)=>{sel+=`<option value="${hi}">${escapeHtml(h)}</option>`;});
+    part4.insertAdjacentHTML("beforeend",`<div class="para-block" id="p4b${i}"><span class="para-label">Đoạn ${i+1}</span><p class="passage" style="margin-top:6px">${escapeHtml(pr.text)}</p>${sel}</select></div>`);
+  });
+  container.appendChild(part4);
+
+  updateProgress();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function totalAnswered(){
+  let n=0;
+  container.querySelectorAll('select[data-part="1"],select[data-part="2"],select[data-part="4"]').forEach(s=>{if(s.value!=="")n++;});
+  const g=new Set();container.querySelectorAll('input[data-part="3"]:checked').forEach(r=>g.add(r.name));
+  return n+g.size;
+}
+function updateProgress(){document.getElementById("progress").innerHTML=`Đã chọn <b>${totalAnswered()}</b>/25 câu`;}
+container.addEventListener("change",()=>{if(!graded)updateProgress();});
+
+function fbBox(ok,label,ansLine,why,yourLine){
+  const d=document.createElement("div");d.className="fb show "+(ok?"ok":"no");
+  d.innerHTML=`<div class="verdict">${ok?"✓ Đúng":"✗ Chưa đúng"} — ${label}</div><div class="ans">${ansLine}${yourLine?` &nbsp;·&nbsp; <span style="color:var(--ink-soft)">${yourLine}</span>`:""}</div><div class="why">${why}</div>`;
+  return d;
+}
+function orderString(p2){
+  const arr=["1 → (câu cố định)"];
+  for(let n=2;n<=7;n++){const it=p2.items.find(x=>x.pos===n);const short=it.text.split(" ").slice(0,5).join(" ");arr.push(`${n} → “${escapeHtml(short)}…”`);}
+  return arr.join(" · ");
+}
+
+function grade(){
+  if(graded)return;const T=TESTS[currentTest];let correct=0;const d={p1:0,p2:0,p3:0,p4:0};
+
+  const p1fb=document.getElementById("p1fb");p1fb.innerHTML="";
+  T.part1.questions.forEach((q,i)=>{
+    const sel=container.querySelector(`select[data-part="1"][data-q="${i}"]`);
+    const c=sel.value===""?null:parseInt(sel.value);const ok=c===q.ans;
+    if(ok){correct++;d.p1++;}
+    sel.style.borderColor=ok?"var(--correct)":"var(--wrong)";sel.disabled=true;
+    p1fb.appendChild(fbBox(ok,`Câu ${i+1}`,`Đáp án đúng: <b>${escapeHtml(q.opts[q.ans])}</b>`,q.why,c===null?"(chưa chọn)":`Bạn chọn: ${escapeHtml(q.opts[c])}`));
+  });
+
+  const p2fb=document.getElementById("p2fb");p2fb.innerHTML="";
+  T.part2.items.forEach((it,i)=>{
+    const sel=container.querySelector(`select[data-part="2"][data-q="${i}"]`);
+    const c=sel.value===""?null:parseInt(sel.value);const ok=c===it.pos;
+    if(ok){correct++;d.p2++;}sel.disabled=true;
+    document.getElementById(`p2row${i}`).classList.add(ok?"graded-ok":"graded-no");
+  });
+  p2fb.appendChild(fbBox(d.p2===6,"Thứ tự đúng",`Thứ tự đúng: ${orderString(T.part2)}`,T.part2.why,`Bạn xếp đúng ${d.p2}/6 câu.`));
+
+  T.part3.questions.forEach((q,i)=>{
+    const ch=container.querySelector(`input[name="t${currentTest}p3q${i}"]:checked`);
+    const c=ch?parseInt(ch.value):null;const ok=c===q.ans;
+    if(ok){correct++;d.p3++;}
+    const qd=document.getElementById(`p3q${i}`);qd.classList.add(ok?"graded-ok":"graded-no");
+    container.querySelectorAll(`input[name="t${currentTest}p3q${i}"]`).forEach(r=>r.disabled=true);
+    qd.appendChild(fbBox(ok,`Câu ${i+1}`,`Đáp án đúng: <b>${LETTERS[q.ans]}</b>`,q.why,c===null?"(chưa chọn)":`Bạn chọn: ${LETTERS[c]}`));
+  });
+
+  T.part4.paras.forEach((pr,i)=>{
+    const sel=container.querySelector(`select[data-part="4"][data-q="${i}"]`);
+    const c=sel.value===""?null:parseInt(sel.value);const ok=c===pr.ans;
+    if(ok){correct++;d.p4++;}
+    sel.disabled=true;sel.style.borderColor=ok?"var(--correct)":"var(--wrong)";
+    const blk=document.getElementById(`p4b${i}`);blk.classList.add(ok?"graded-ok":"graded-no");
+    blk.appendChild(fbBox(ok,`Đoạn ${i+1}`,`Tiêu đề đúng: <b>${escapeHtml(T.part4.bank[pr.ans])}</b>`,pr.why,c===null?"(chưa chọn)":`Bạn chọn: ${escapeHtml(T.part4.bank[c])}`));
+  });
+
+  graded=true;showScore(correct,d);
+  const sb=document.getElementById("submitBtn");sb.disabled=true;sb.style.opacity=.5;
+}
+
+function showScore(correct,d){
+  const pct=Math.round(correct/25*100);let band;
+  if(correct>=24)band="Ước lượng: C (Advanced)";
+  else if(correct>=20)band="Ước lượng: B2 – C";
+  else if(correct>=15)band="Ước lượng: B1 – B2";
+  else if(correct>=9)band="Ước lượng: A2 – B1";
+  else band="Ước lượng: A1 – A2";
+  const card=document.getElementById("scoreCard");
+  card.innerHTML=`<div style="font-family:'Fraunces',serif;font-size:15px;letter-spacing:.05em;text-transform:uppercase;opacity:.85;margin-bottom:4px">Kết quả ${META[currentTest].split(" — ")[0]}</div>
+    <div class="big">${correct}<span>/25 · ${pct}%</span></div>
+    <div class="band">${band}</div>
+    <div class="breakdown"><div class="chip">Part 1<b>${d.p1}/5</b></div><div class="chip">Part 2<b>${d.p2}/6</b></div><div class="chip">Part 3<b>${d.p3}/7</b></div><div class="chip">Part 4<b>${d.p4}/7</b></div></div>
+    <div class="note">Thang quy đổi CEFR chỉ mang tính tham khảo để định hướng luyện tập, không phải điểm chính thức của British Council. Cuộn xuống để xem giải thích từng câu.</div>`;
+  card.classList.add("show");card.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+document.getElementById("submitBtn").addEventListener("click",grade);
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  const sb=document.getElementById("submitBtn");sb.disabled=false;sb.style.opacity=1;render(currentTest);
+});
+
+render(1);
+</script>
+</body>
+</html>
